@@ -2,7 +2,6 @@ package org.ecommerce.userservice.Controller;
 
 import org.ecommerce.userservice.DTO.UserRequestDTO;
 import org.ecommerce.userservice.DTO.UserResponseDTO;
-import org.ecommerce.userservice.Model.UserEntity;
 import org.ecommerce.userservice.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

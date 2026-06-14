@@ -63,6 +63,7 @@ public class UserService {
             userResult.setName(user.getName());
             userResult.setEmail(user.getEmail());
             userResult.setPassword(user.getPassword());
+            userResult.setRole(user.getRole());
             userResult.setPhone(user.getPhone());
             UserEntity savedUser = userRepo.save(userResult);
             return modelMapper.map(userResult, UserResponseDTO.class);
