@@ -20,4 +20,5 @@ public class CartItemsEntity {
     private Integer cartId;
     private Integer productId;
     private Integer quantity;
+    private Double unitPrice;
 }

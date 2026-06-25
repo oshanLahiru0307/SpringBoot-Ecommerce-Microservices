@@ -1,9 +1,9 @@
 package org.ecommerce.productservice.Service;
 
-import org.ecommerce.productservice.DTO.CategoryRequestDTO;
-import org.ecommerce.productservice.DTO.CategoryResponseDTO;
+import org.ecommerce.productservice.DTO.ProductRequestDTO;
+import org.ecommerce.productservice.DTO.ProductResponseDTO;
 import org.ecommerce.productservice.Model.ProductEntity;
-import org.ecommerce.productservice.Repository.CategoryRepo;
+import org.ecommerce.productservice.Repository.ProductRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
@@ -11,59 +11,83 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class ProductService {
 
-    private final CategoryRepo categoryRepo;
+    private final ProductRepo productRepo;
     private final ModelMapper modelMapper;
 
-    public CategoryService(CategoryRepo categoryRepo, ModelMapper modelMapper) {
-        this.categoryRepo = categoryRepo;
+    public ProductService(ProductRepo productRepo, ModelMapper modelMapper) {
+        this.productRepo = productRepo;
         this.modelMapper = modelMapper;
     }
 
-    //get all categories
-    public List<CategoryResponseDTO> getAllCategories() {
-        List<ProductEntity> categorylist = categoryRepo.findAll();
-        return modelMapper.map(categorylist, new TypeToken<List<CategoryResponseDTO>>(){}.getType());
-    }
-
-    //get category by id
-    public CategoryResponseDTO getCategoryById(Integer id){
-        ProductEntity result = categoryRepo.findById(id).orElse(null);
-        if(result == null){
+    //get all products
+    public List<ProductResponseDTO> getAllProducts() {
+        try {
+            List<ProductEntity> products = productRepo.findAll();
+            return modelMapper.map(products, new TypeToken<List<ProductResponseDTO>>() {}.getType());
+        } catch (Exception e) {
+            System.out.println("Error occurred while fetching products: " + e.getMessage());
             return null;
         }
-        return modelMapper.map(result, CategoryResponseDTO.class);
     }
 
-    //caret new category
-    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO){
-        ProductEntity category = modelMapper.map(categoryRequestDTO, ProductEntity.class);
-        ProductEntity savedCategory = categoryRepo.save(category);
-        return modelMapper.map(savedCategory, CategoryResponseDTO.class);
-    }
-
-    //update category
-    public CategoryResponseDTO updateCategory(Integer id, CategoryRequestDTO categoryRequestDTO){
-        ProductEntity category = categoryRepo.findById(id).orElse(null);
-        if(category == null){
+    //get product by id
+    public ProductResponseDTO getProductById(Integer productId) {
+        try {
+            ProductEntity product = productRepo.findById(productId).orElse(null);
+            if (product == null) {
+                System.out.println("Product not found with id: " + productId);
+                return null;
+            }
+            return modelMapper.map(product, ProductResponseDTO.class);
+        } catch (Exception e) {
+            System.out.println("Error occurred while fetching product: " + e.getMessage());
             return null;
         }
-        category.setCategoryName(categoryRequestDTO.getCategoryName());
-        ProductEntity updatedCategory = categoryRepo.save(category);
-        return modelMapper.map(updatedCategory, CategoryResponseDTO.class);
     }
 
-    //delete category
-    public String deleteCategory(Integer id){
-        ProductEntity category = categoryRepo.findById(id).orElse(null);
-        if(category == null){
-            return "Category not found";
+    public ProductResponseDTO createProduct(ProductRequestDTO request) {
+        try {
+            ProductEntity product = modelMapper.map(request, ProductEntity.class);
+            ProductEntity savedProduct = productRepo.save(product);
+            return modelMapper.map(savedProduct, ProductResponseDTO.class);
+        } catch (Exception e) {
+            System.out.println("Error occurred while creating product: " + e.getMessage());
+            return null;
         }
-        categoryRepo.delete(category);
-        return "Category deleted successfully";
     }
 
+    public ProductResponseDTO updateProductById(Integer productId, ProductRequestDTO request) {
+        try {
+            ProductEntity existingProduct = productRepo.findById(productId).orElse(null);
+            if (existingProduct == null) {
+                System.out.println("Product not found with id: " + productId);
+                return null;
+            }
 
+            existingProduct.setProductName(request.getProductName());
+            existingProduct.setProductDescription(request.getProductDescription());
+            existingProduct.setProductPrice(request.getProductPrice());
 
+            ProductEntity updatedProduct = productRepo.save(existingProduct);
+            return modelMapper.map(updatedProduct, ProductResponseDTO.class);
+        } catch (Exception e) {
+            System.out.println("Error occurred while updating product: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String deleteProductById(Integer productId) {
+        try {
+            if (productRepo.existsById(productId)) {
+                productRepo.deleteById(productId);
+                return "product deleted successfully";
+            }
+            return "product not found with id: " + productId;
+        } catch (Exception e) {
+            System.out.println("Error occurred while deleting product: " + e.getMessage());
+            return "product not found with id: " + productId + " due to error: " + e.getMessage();
+        }
+    }
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class CartItemRequestDTO {
 
     private Integer cartId;
-    private String productId;
+    private Integer productId;
     private Integer quantity;
-    private Double price;
+    private Double unitPrice;
 }
