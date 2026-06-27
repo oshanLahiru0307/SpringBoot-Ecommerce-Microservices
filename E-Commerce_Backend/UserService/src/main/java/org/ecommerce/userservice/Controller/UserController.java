@@ -50,7 +50,7 @@ public class UserController {
     }
 
     //delete user by id
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/deleteUser/{userId}")
     public ResponseEntity<?> deleteUserById(@PathVariable Integer userId){
         String response = userService.deleteUserById(userId);
         if(response.contains("not found")){
